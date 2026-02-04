@@ -1,0 +1,96 @@
+From: Mutt maintainers <mutt@packages.debian.org>
+Date: Sun, 29 Oct 2023 21:16:56 -0300
+Subject: neomuttrc
+
+Some Debian specific changes to the official neomuttrc configuration.
+Last-update: 2024-11-22
+Forwarded: not-needed
+---
+ docs/neomuttrc.head     | 36 +++++++++++++++++++++++++++++++++---
+ docs/neomuttrc.man.head |  4 ++--
+ 2 files changed, 35 insertions(+), 5 deletions(-)
+
+diff --git a/docs/neomuttrc.head b/docs/neomuttrc.head
+index da0072a..69bb95e 100644
+--- a/docs/neomuttrc.head
++++ b/docs/neomuttrc.head
+@@ -12,6 +12,32 @@ unignore from: subject to cc date x-mailer x-url user-agent
+ # Display the fields in this order
+ hdr_order date from to cc subject
+ 
++# emacs-like bindings
++bind editor    "\e<delete>"    kill-word
++bind editor    "\e<backspace>" kill-word
++
++# map delete-char to a sane value
++bind editor     <delete>  delete-char
++
++# some people actually like these settings
++#set pager_stop
++#bind pager <up> previous-line
++#bind pager <down> next-line
++
++# Enable the use of threads
++set use_threads=threads
++
++# The behavior of this option on the Debian mutt package is
++# not the original one because exim4, the default SMTP on Debian
++# does not strip bcc headers so this can cause privacy problems;
++# see man muttrc for more info
++#unset write_bcc
++# Postfix and qmail use Delivered-To for detecting loops
++unset bounce_delivered
++
++# System-wide CA file managed by the ca-certificates package
++set ssl_ca_certificates_file="/etc/ssl/certs/ca-certificates.crt"
++
+ # imitate the old search-body function
+ macro index \eb "<search>~b " "search in message bodies"
+ 
+@@ -23,9 +49,9 @@ macro index,pager,attach,compose \cb "\
+ "call urlview to extract URLs out of a message"
+ 
+ # Show documentation when pressing F1
+-macro generic,pager <F1> "<shell-escape> less @docdir@/manual.txt<Enter>" "show NeoMutt documentation"
++macro generic,pager <F1> "<shell-escape> zcat @docdir@/manual.txt.gz | sensible-pager<Enter>" "show NeoMutt documentation"
+ # and also F2, as some terminals use F1
+-macro generic,pager <F2> "<shell-escape> less @docdir@/manual.txt<Enter>" "show NeoMutt documentation"
++macro generic,pager <F2> "<shell-escape> zcat @docdir@/manual.txt.gz | sensible-pager<Enter>" "show NeoMutt documentation"
+ 
+ # show the incoming mailboxes list (just like "neomutt -y") and back when pressing "y"
+ macro index y "<change-folder>?" "show incoming mailboxes list"
+@@ -40,7 +66,7 @@ bind browser y exit
+ bind editor <delete> delete-char
+ 
+ # If NeoMutt is unable to determine your site's domain name correctly, you can
+-# set the default here.
++# set the default here. (better: fix /etc/mailname)
+ #
+ # set hostname=cs.hmc.edu
+ 
+@@ -52,6 +78,10 @@ bind editor <delete> delete-char
+ # be undone with unmime_lookup.
+ mime_lookup application/octet-stream
+ 
++# Upgrade the progress counter every 250ms, good for mutt over SSH
++# see http://bugs.debian.org/537746
++set time_inc=250
++
+ # Please see the manual (section "attachments")  for detailed
+ # documentation of the "attachments" command.
+ #
+diff --git a/docs/neomuttrc.man.head b/docs/neomuttrc.man.head
+index c50510a..c1c42f1 100644
+--- a/docs/neomuttrc.man.head
++++ b/docs/neomuttrc.man.head
+@@ -1412,8 +1412,8 @@ identical plus and minus error margins.
+ .\".
+ .TS
+ allbox center tab(|);
+-lb c c c c
+-lb l l l l .
++lb c c c c c c c
++lb l l l l l l l.
+ \0Date Unit|d|w|m|y
+ \0Description|Days|Weeks|Months|Years
+ .TE

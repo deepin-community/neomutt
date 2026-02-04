@@ -1,0 +1,10 @@
+neomutt (20240425+dfsg-2) unstable; urgency=medium
+
+  Upstream has removed the config samples and from 20240425+dfsg-1 onwards
+  that change is in Debian. Effectively, gpg.rc and smime.rc aren't available
+  anymore.
+
+  Please check chapter 2 section 10 of neomutt's manual or README.Debian
+  for more information.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Mon, 10 Jun 2024 23:45:11 -0300

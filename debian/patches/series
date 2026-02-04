@@ -1,0 +1,5 @@
+debian-specific/neomuttrc.patch
+debian-specific/use_usr_bin_editor.patch
+debian-specific/document_debian_defaults.patch
+# to be reworked
+#upstream/fix-groff-C-font.patch

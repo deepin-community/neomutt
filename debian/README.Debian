@@ -1,0 +1,23 @@
+neomutt for Debian
+------------------
+
+Upgrade Issues
+==============
+
+Upstream has removed the config samples in d67c876 and the first release
+incorporating that change was 20230407 which didn't make into Debian. We had
+two debian releases incorporating that commit. 20231103+dfsg1-1 did not have
+gpg.rc and smime.rc, but didn't remove the files from /etc/neomuttrc.d on
+upgrade and 20240425+dfsg-1 which removed those files on upgrade via conffiles'
+remove-on-upgrade (reported in #1059383).
+
+Effectively, gpg.rc and smime.rc aren't available anymore in neomutt. One can
+choose to remove "unset crypt_use_gpgme" from the personal config file and use
+libgpgme or keep a copy of those two files in a personal directory and source
+them in neomuttrc.
+
+For more information, please check chapter 2 section 10 of neomutt's manual
+available at /usr/share/doc/neomutt.
+
+--
+Carlos Henrique Lima Melara <charlesmelara@riseup.net>

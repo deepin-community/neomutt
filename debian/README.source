@@ -1,0 +1,11 @@
+The original neomutt source was repackaged to remove the autosetup/jimsh0.c
+file, which is a generated bootstrap of jimtcl; this was reported in
+https://bugs.debian.org/882717.
+
+A build dependency on jimsh was put in place to replace the file.
+
+Neomutt has a separate repository with test files [1] that is needed in order
+to execute tests. So we use uscan's Multiple Upstream Tarball (MUT) feature to
+include it in the source package.
+
+[1] https://github.com/neomutt/neomutt-test-files

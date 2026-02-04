@@ -1,0 +1,66 @@
+/**
+ * @file
+ * Regex Colour
+ *
+ * @authors
+ * Copyright (C) 2021-2023 Richard Russon <rich@flatcap.org>
+ *
+ * @copyright
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef MUTT_COLOR_REGEX4_H
+#define MUTT_COLOR_REGEX4_H
+
+#include "config.h"
+#include <stdbool.h>
+#include "mutt/lib.h"
+#include "attr.h"
+#include "color.h"
+
+/**
+ * struct RegexColor - A regular expression and a color to highlight a line
+ */
+struct RegexColor
+{
+  struct AttrColor attr_color;       ///< Colour and attributes to apply
+  char *pattern;                     ///< Pattern to match
+  regex_t regex;                     ///< Compiled regex
+  int match;                         ///< Substring to match, 0 for old behaviour
+  struct PatternList *color_pattern; ///< Compiled pattern to speed up index color calculation
+
+  bool stop_matching : 1;            ///< Used by the pager for body patterns, to prevent the color from being retried once it fails
+
+  STAILQ_ENTRY(RegexColor) entries;  ///< Linked list
+};
+STAILQ_HEAD(RegexColorList, RegexColor);
+
+void regex_colors_init   (void);
+void regex_colors_reset  (void);
+void regex_colors_cleanup(void);
+
+void                   regex_color_clear(struct RegexColor *rcol);
+void                   regex_color_free (struct RegexColor **ptr);
+struct RegexColor *    regex_color_new  (void);
+
+struct RegexColorList *regex_colors_get_list(enum ColorId cid);
+
+void                   regex_color_list_clear(struct RegexColorList *rcl);
+struct RegexColorList *regex_color_list_new(void);
+
+bool regex_colors_parse_color_list (enum ColorId cid, const char *pat, struct AttrColor *ac, int *rc, struct Buffer *err);
+int  regex_colors_parse_status_list(enum ColorId cid, const char *pat, struct AttrColor *ac, int match, struct Buffer *err);
+bool regex_colors_parse_uncolor    (enum ColorId cid, const char *pat);
+
+#endif /* MUTT_COLOR_REGEX4_H */

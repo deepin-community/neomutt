@@ -1,0 +1,2 @@
+remove-on-upgrade /etc/neomuttrc.d/gpg.rc
+remove-on-upgrade /etc/neomuttrc.d/smime.rc

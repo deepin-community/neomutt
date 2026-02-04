@@ -1,0 +1,67 @@
+From: Antonio Radici <antonio@debian.org>
+Date: Thu, 27 Feb 2014 16:19:30 +0100
+Subject: document_debian_defaults
+
+Some customization of the options which are straying
+from the default only on Debian systems.
+Forwarded: not-needed
+Last-update: 2023-12-30
+---
+ docs/config.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/docs/config.c b/docs/config.c
+index 548c293..b29567c 100644
+--- a/docs/config.c
++++ b/docs/config.c
+@@ -487,6 +487,9 @@
+ ** .pp
+ ** When this variable is \fIset\fP, NeoMutt will include Delivered-To headers when
+ ** bouncing messages.  Postfix users may wish to \fIunset\fP this variable.
++** .pp
++** \fBNote:\fP On Debian systems, this option is unset by default in
++** /etc/neomuttrc.
+ */
+ 
+ { "braille_friendly", DT_BOOL, false },
+@@ -1896,6 +1899,9 @@
+ ** Optionally, NeoMutt can be compiled with a fixed domain name.
+ ** .pp
+ ** Also see $$use_domain and $$hidden_host.
++** .pp
++** \fBNote:\fP On Debian systems, the default for this variable is obtained
++** from /etc/mailname when NeoMutt starts.
+ */
+ 
+ #ifdef HAVE_LIBIDN
+@@ -4780,6 +4786,10 @@
+ ** .pp
+ ** Encrypt the message to $$smime_default_key too.
+ ** (S/MIME only)
++** .pp
++** \fBNote:\fP On Debian systems, this defaults to the first existing file in
++** the following list: ~/.smime/ca-certificates.crt ~/.smime/ca-bundle.crt
++** /etc/ssl/certs/ca-certificates.crt.
+ */
+ #endif
+ 
+@@ -5666,6 +5676,9 @@
+ ** .pp
+ ** See the "Use Threads Feature" section for further explanation and
+ ** examples.
++** .pp
++** \fBNote:\fP On Debian systems, this option is set by default to
++** ``threads'' in /etc/neomuttrc.
+ */
+ 
+ { "user_agent", DT_BOOL, false },
+@@ -5749,6 +5762,9 @@
+ ** Note this option only affects the sending of messages.  Fcc'ed
+ ** copies of a message will always contain the "Bcc:" header if
+ ** one exists.
++** .pp
++** \fBNote:\fP On Debian systems, exim4 and postfix strip BCC headers by
++** default. The above warning applies to exim3 users, see /etc/neomuttrc.
+ */
+ 
+ { "write_inc", DT_NUMBER, 10 },

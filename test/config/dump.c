@@ -1,0 +1,388 @@
+/**
+ * @file
+ * Test code for the Config Dump functions
+ *
+ * @authors
+ * Copyright (C) 2019-2025 Richard Russon <rich@flatcap.org>
+ * Copyright (C) 2020 Aditya De Saha <adityadesaha@gmail.com>
+ * Copyright (C) 2020 Pietro Cerutti <gahr@gahr.ch>
+ * Copyright (C) 2023 Dennis Schön <mail@dennis-schoen.de>
+ * Copyright (C) 2023 наб <nabijaczleweli@nabijaczleweli.xyz>
+ *
+ * @copyright
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#define TEST_NO_MAIN
+#include "config.h"
+#include "acutest.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include "mutt/lib.h"
+#include "config/lib.h"
+#include "email/lib.h"
+#include "core/lib.h"
+#include "common.h" // IWYU pragma: keep
+#include "test_common.h"
+
+// clang-format off
+static struct Mapping MboxTypeMap[] = {
+  { "mbox",    MUTT_MBOX,    },
+  { "MMDF",    MUTT_MMDF,    },
+  { "MH",      MUTT_MH,      },
+  { "Maildir", MUTT_MAILDIR, },
+  { NULL,      0,            },
+};
+
+/**
+ * Test Lookup table
+ */
+const struct Mapping SortMangoMethods[] = {
+  { "date",          EMAIL_SORT_DATE },
+  { "date-sent",     EMAIL_SORT_DATE },
+  { "date-received", EMAIL_SORT_DATE_RECEIVED },
+  { "from",          EMAIL_SORT_FROM },
+  { "label",         EMAIL_SORT_LABEL },
+  { "unsorted",      EMAIL_SORT_UNSORTED },
+  { "mailbox-order", EMAIL_SORT_UNSORTED },
+  { "score",         EMAIL_SORT_SCORE },
+  { "size",          EMAIL_SORT_SIZE },
+  { "spam",          EMAIL_SORT_SPAM },
+  { "subject",       EMAIL_SORT_SUBJECT },
+  { "threads",       EMAIL_SORT_THREADS },
+  { "to",            EMAIL_SORT_TO },
+  { NULL,            0 },
+};
+// clang-format on
+
+struct EnumDef MboxTypeDef = {
+  "mbox_type",
+  4,
+  (struct Mapping *) &MboxTypeMap,
+};
+
+// clang-format off
+static struct ConfigDef Vars[] = {
+  { "Apple",      DT_BOOL,                           false,                       0,                   NULL, },
+  { "Banana",     DT_BOOL,                           true,                        0,                   NULL, },
+  { "Cherry",     DT_NUMBER,                         0,                           0,                   NULL, },
+  { "Damson",     DT_SYNONYM,                        IP "Cherry",                 0,                   NULL, },
+  { "Elderberry", DT_ADDRESS,                        IP "elderberry@example.com", 0,                   NULL, },
+  { "Fig",        DT_STRING|D_STRING_COMMAND|D_NOT_EMPTY, IP "fig",               0,                   NULL, },
+  { "Guava",      DT_LONG,                           0,                           0,                   NULL, },
+  { "Hawthorn",   DT_ENUM,                           2,                           IP &MboxTypeDef,     NULL, },
+  { "Ilama",      DT_MBTABLE,                        0,                           0,                   NULL, },
+  { "Jackfruit",  DT_PATH|D_PATH_FILE,               IP "/etc/passwd",            0,                   NULL, },
+  { "Kumquat",    DT_QUAD,                           0,                           0,                   NULL, },
+  { "Lemon",      DT_REGEX,                          0,                           0,                   NULL, },
+  { "Mango",      DT_SORT,                           EMAIL_SORT_DATE,             IP SortMangoMethods, NULL, },
+  { "Nectarine",  DT_STRING|D_SENSITIVE,             IP "nectarine",              0,                   NULL, },
+  { "Olive",      DT_STRING|D_INTERNAL_DEPRECATED,   IP "olive",                  0,                   NULL, },
+  { "Pap_aya",    DT_STRING,                         IP "papaya",                 0,                   NULL, },
+  { "Quince",     DT_MYVAR,                          IP "my_value",               0,                   NULL, },
+  { NULL },
+};
+// clang-format on
+
+void mutt_pretty_mailbox(char *buf, size_t buflen)
+{
+}
+
+bool test_pretty_var(void)
+{
+  // size_t pretty_var(const char *str, struct Buffer *buf);
+
+  {
+    struct Buffer *buf = buf_pool_get();
+    if (!TEST_CHECK(pretty_var(NULL, buf) == 0))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+    buf_pool_release(&buf);
+  }
+
+  {
+    if (!TEST_CHECK(pretty_var("apple", NULL) == 0))
+      return false;
+  }
+
+  {
+    struct Buffer *buf = buf_pool_get();
+    if (!TEST_CHECK(pretty_var("apple", buf) > 0))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+
+    if (!TEST_CHECK_STR_EQ(buf_string(buf), "\"apple\""))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+
+    buf_pool_release(&buf);
+  }
+
+  return true;
+}
+
+bool test_escape_string(void)
+{
+  // size_t escape_string(struct Buffer *buf, const char *src);
+
+  {
+    if (!TEST_CHECK(escape_string(NULL, "apple") == 0))
+      return false;
+  }
+
+  {
+    struct Buffer *buf = buf_pool_get();
+    if (!TEST_CHECK(escape_string(buf, NULL) == 0))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+    buf_pool_release(&buf);
+  }
+
+  {
+    const char *before = "apple\nbanana\rcherry\tdam\007son\\endive\"fig'grape";
+    const char *after = "apple\\nbanana\\rcherry\\tdam\\gson\\\\endive\\\"fig'grape";
+    struct Buffer *buf = buf_pool_get();
+    if (!TEST_CHECK(escape_string(buf, before) > 0))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+
+    if (!TEST_CHECK_STR_EQ(buf_string(buf), after))
+    {
+      buf_pool_release(&buf);
+      return false;
+    }
+
+    buf_pool_release(&buf);
+  }
+
+  return true;
+}
+
+bool test_elem_list_sort(void)
+{
+  // int elem_list_sort(const void *a, const void *b, void *arg);
+
+  {
+    struct HashElem he = { 0 };
+    if (!TEST_CHECK(elem_list_sort(NULL, &he, NULL) == 0))
+      return false;
+  }
+
+  {
+    struct HashElem he = { 0 };
+    if (!TEST_CHECK(elem_list_sort(&he, NULL, NULL) == 0))
+      return false;
+  }
+
+  return true;
+}
+
+struct ConfigSet *create_sample_data(void)
+{
+  struct ConfigSet *cs = cs_new(30);
+  if (!cs)
+    return NULL;
+
+  cs_register_type(cs, &CstAddress);
+  cs_register_type(cs, &CstBool);
+  cs_register_type(cs, &CstEnum);
+  cs_register_type(cs, &CstLong);
+  cs_register_type(cs, &CstMbtable);
+  cs_register_type(cs, &CstMyVar);
+  cs_register_type(cs, &CstNumber);
+  cs_register_type(cs, &CstPath);
+  cs_register_type(cs, &CstPath);
+  cs_register_type(cs, &CstQuad);
+  cs_register_type(cs, &CstRegex);
+  cs_register_type(cs, &CstSort);
+  cs_register_type(cs, &CstString);
+
+  if (!TEST_CHECK(cs_register_variables(cs, Vars)))
+    return NULL;
+
+  return cs;
+}
+
+bool test_get_elem_list(void)
+{
+  // struct HashElem **get_elem_list(struct ConfigSet *cs);
+
+  {
+    struct HashElemArray hea = ARRAY_HEAD_INITIALIZER;
+    hea = get_elem_list(NULL, GEL_ALL_CONFIG);
+    if (!TEST_CHECK(ARRAY_EMPTY(&hea)))
+      return false;
+  }
+
+  {
+    struct ConfigSet *cs = create_sample_data();
+    if (!cs)
+      return false;
+
+    struct HashElemArray hea = ARRAY_HEAD_INITIALIZER;
+    hea = get_elem_list(cs, GEL_ALL_CONFIG);
+    if (!TEST_CHECK(!ARRAY_EMPTY(&hea)))
+    {
+      cs_free(&cs);
+      return false;
+    }
+
+    ARRAY_FREE(&hea);
+    cs_free(&cs);
+  }
+
+  {
+    struct ConfigSet *cs = create_sample_data();
+    if (!cs)
+      return false;
+
+    const char *name = "Apple";
+    int rc = cs_str_string_set(cs, name, "yes", NULL);
+    TEST_CHECK_NUM_EQ(CSR_RESULT(rc), CSR_SUCCESS);
+
+    struct HashElemArray hea = ARRAY_HEAD_INITIALIZER;
+    hea = get_elem_list(cs, GEL_CHANGED_CONFIG);
+    if (!TEST_CHECK(!ARRAY_EMPTY(&hea)))
+    {
+      cs_free(&cs);
+      return false;
+    }
+
+    ARRAY_FREE(&hea);
+    cs_free(&cs);
+  }
+
+  return true;
+}
+
+bool test_dump_config_neo(void)
+{
+  // void dump_config_neo(struct ConfigSet *cs, struct HashElem *he, struct Buffer *value, struct Buffer *initial, ConfigDumpFlags flags, FILE *fp);
+
+  {
+    struct ConfigSet *cs = create_sample_data();
+    if (!cs)
+      return false;
+
+    struct HashElem *he = cs_get_elem(cs, "Banana");
+
+    struct Buffer *buf_val = buf_pool_get();
+    buf_addstr(buf_val, "yes");
+    struct Buffer *buf_init = buf_pool_get();
+    buf_addstr(buf_init, "yes");
+
+    FILE *fp = fopen("/dev/null", "w");
+    if (!fp)
+      return false;
+
+    // Degenerate tests
+
+    dump_config_neo(NULL, he, buf_val, buf_init, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(NULL, he, &buf_val, &buf_init, CS_DUMP_NO_FLAGS, fp)");
+    dump_config_neo(cs, NULL, buf_val, buf_init, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, NULL, &buf_val, &buf_init, CS_DUMP_NO_FLAGS, fp)");
+    dump_config_neo(cs, he, NULL, buf_init, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, NULL, &buf_init, CS_DUMP_NO_FLAGS, fp)");
+    dump_config_neo(cs, he, buf_val, NULL, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, NULL, CS_DUMP_NO_FLAGS, fp)");
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_NO_FLAGS, NULL);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_NO_FLAGS, NULL)");
+
+    // Normal tests
+
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_NO_FLAGS, fp)");
+
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_ONLY_CHANGED, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_ONLY_CHANGED, fp)");
+
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_SHOW_DEFAULTS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_SHOW_DEFAULTS, fp)");
+
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_SHOW_DOCS | CS_DUMP_LINK_DOCS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_SHOW_DEFAULTS, fp)");
+
+    he = mutt_hash_find_elem(cs->hash, "Damson");
+    dump_config_neo(cs, he, buf_val, buf_init, CS_DUMP_NO_FLAGS, fp);
+    TEST_CHECK_(1, "dump_config_neo(cs, he, &buf_val, &buf_init, CS_DUMP_NO_FLAGS, fp)");
+
+    fclose(fp);
+    buf_pool_release(&buf_val);
+    buf_pool_release(&buf_init);
+    cs_free(&cs);
+  }
+
+  return true;
+}
+
+bool test_dump_config(void)
+{
+  // bool dump_config(struct ConfigSet *cs, struct HashElemArray *hea, ConfigDumpFlags flags, FILE *fp);
+
+  {
+    struct ConfigSet *cs = create_sample_data();
+    if (!cs)
+      return false;
+
+    FILE *fp = fopen("/dev/null", "w");
+    if (!fp)
+      return false;
+
+    struct HashElemArray hea = get_elem_list(cs, GEL_ALL_CONFIG);
+
+    // Degenerate tests
+
+    TEST_CHECK(!dump_config(NULL, &hea, CS_DUMP_NO_FLAGS, fp));
+    TEST_CHECK(!dump_config(cs, NULL, CS_DUMP_NO_FLAGS, fp));
+    TEST_CHECK(!dump_config(cs, &hea, CS_DUMP_NO_FLAGS, NULL));
+
+    // Normal tests
+
+    TEST_CHECK(dump_config(cs, &hea, CS_DUMP_NO_FLAGS, fp));
+    TEST_CHECK(dump_config(cs, &hea, CS_DUMP_ONLY_CHANGED | CS_DUMP_HIDE_SENSITIVE, fp));
+    TEST_CHECK(dump_config(cs, &hea, CS_DUMP_HIDE_VALUE | CS_DUMP_SHOW_DEFAULTS, fp));
+    TEST_CHECK(dump_config(cs, &hea, CS_DUMP_SHOW_DOCS | CS_DUMP_LINK_DOCS, fp));
+    TEST_CHECK(dump_config(cs, &hea, CS_DUMP_SHOW_DISABLED, fp));
+
+    struct ConfigSet *cs_bad = cs_new(30);
+    TEST_CHECK(!dump_config(cs_bad, &hea, CS_DUMP_NO_FLAGS, fp));
+
+    ARRAY_FREE(&hea);
+    fclose(fp);
+    cs_free(&cs_bad);
+    cs_free(&cs);
+  }
+
+  return true;
+}
+
+void test_config_dump(void)
+{
+  TEST_CHECK(test_pretty_var());
+  TEST_CHECK(test_escape_string());
+  TEST_CHECK(test_elem_list_sort());
+  TEST_CHECK(test_get_elem_list());
+  TEST_CHECK(test_dump_config_neo());
+  TEST_CHECK(test_dump_config());
+}
