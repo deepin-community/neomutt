@@ -1,0 +1,15 @@
+# It cites the many possible places where one can find /etc, FHS location is
+# the first, but others are mentioned too
+FSSTND-dir-in-manual-page /usr/etc/ [usr/share/man/man5/neomuttrc.5.gz:*]
+# Even splitting the package in -doc we still get this, lots of configurations,
+# scripts and manpages in neomutt.
+arch-dep-package-has-big-usr-share *
+# They are documentation about the scripts in the same folder
+package-contains-documentation-outside-usr-share-doc [usr/share/neomutt/account-command/README.md]
+package-contains-documentation-outside-usr-share-doc [usr/share/neomutt/account-command/gpg-json/README.md]
+package-contains-documentation-outside-usr-share-doc [usr/share/neomutt/account-command/macos-keychain/README.md]
+package-contains-documentation-outside-usr-share-doc [usr/share/neomutt/oauth2/README.md]
+package-contains-documentation-outside-usr-share-doc [usr/share/neomutt/vim-keys/README.md]
+# Programs in libexec that might be used for plumbing by end users
+spare-manual-page [usr/share/man/man1/pgpewrap_neomutt.1.gz]
+spare-manual-page [usr/share/man/man1/smime_keys_neomutt.1.gz]

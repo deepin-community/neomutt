@@ -1,15 +1,66 @@
-Source: template-repository
-Section: unknown
-Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Source: neomutt
+Section: mail
+Maintainer: Mutt maintainers <mutt@packages.debian.org>
+Uploaders: Antonio Radici <antonio@debian.org>,
+           Carlos Henrique Lima Melara <charlesmelara@riseup.net>,
+Build-Depends: debhelper-compat (= 13),
+               dh-lua,
+               docbook-xml,
+               docbook-xsl,
+               gawk,
+               gettext,
+               jimsh,
+               libgnutls28-dev,
+               libgpg-error-dev,
+               libgpgme-dev,
+               libgsasl-dev,
+               libidn2-dev,
+               libkrb5-dev,
+               liblmdb-dev,
+               liblz4-dev,
+               libncurses-dev,
+               libnotmuch-dev [!alpha !hppa !hurd-any !powerpc !sparc64],
+               libpcre2-dev,
+               libsqlite3-dev,
+               libtokyocabinet-dev,
+               libxml2-utils,
+               libzstd-dev,
+               pkgconf,
+               w3m,
+               xsltproc,
+               zlib1g-dev,
+Standards-Version: 4.7.3
+Vcs-Git: https://salsa.debian.org/mutt-team/neomutt.git
+Vcs-Browser: https://salsa.debian.org/mutt-team/neomutt
+Homepage: https://www.neomutt.org/
 
-Package: template-repository
+Package: neomutt
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: sensible-utils,
+         ${misc:Depends},
+         ${shlibs:Depends},
+Recommends: locales,
+            mailcap,
+Suggests: aspell | ispell,
+          ca-certificates,
+          default-mta | mail-transport-agent,
+          gnupg,
+          openssl,
+          python3,
+          urlview,
+Provides: imap-client,
+          mail-reader,
+Description: command line mail reader based on Mutt, with added features
+ Neomutt supports all the features that are supported by Mutt, including POP and
+ IMAP support, SSL encryption and SASL authentication, threading and GPG
+ support.
+ .
+ On the top of that, neomutt provides:
+ .
+  * Notmuch: a mail indexing tools that provides advanced features such as
+    full-text search, thread reconstruction and added features.
+  * Color attachment headers using regex, just like mail bodies.
+  * Custom rules for theming the mail index.
+  * NNTP support.
+  * Visual progress bar for slow operations.
+  * Trash folder.

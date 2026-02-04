@@ -1,5 +1,580 @@
-template-repository (1.0-1) unstable; urgency=medium
+neomutt (20260105+dfsg-1) unstable; urgency=medium
 
-  * Initial release
+  * New upstream version 20260105+dfsg.
+      - neomutt-test-files: new version from git
+        (neomutt/neomutt-test-files@c769cde).
+  * debian/control:
+      - Bump stds-version to 4.7.3 and drop Priority field.
+      - Drop Rules-Requires-Root, since trixie it defaults to no.
+  * debian/copyright:
+      - Bump packaging copyright years - happy 2026!
+      - Update upstream copyright years.
+  * debian/patches/upstream/build-fix-smime-un-install.patch: remove, released
+    upstream.
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Mon, 05 Jan 2026 22:31:50 -0300
+
+neomutt (20251211+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20251211+dfsg.
+  * debian/neomutt.install: install smime.rc now that upstream provides it
+    again.
+  * debian/patches: refresh patches against new upstream release.
+      - upstream/build-fix-smime-un-install.patch: cherry-pick from upstream.
+      - upstream/fix-groff-C-font.patch: disable, it needs to be reworked.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 12 Dec 2025 18:53:41 -0300
+
+neomutt (20250905+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20250905+dfsg.
+  * debian/copyright: update upstream copyright stanza for new release.
+  * debian/neomutt.lintian-overrides: use glob for line indication on
+    override.
+  * debian/patches: refresh patches against new upstream release.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 05 Sep 2025 13:25:03 -0300
+
+neomutt (20250510+dfsg-2) unstable; urgency=medium
+
+  * Upload to unstable.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 16 May 2025 14:56:17 -0300
+
+neomutt (20250510+dfsg-1) experimental; urgency=medium
+
+  * New upstream version 20250510+dfsg.
+  * debian/patches: refresh patches against new upstream release.
+      - debian-specific/use_usr_bin_editor.patch: refresh.
+      - upstream/dont-stop-if-spoolfile-is-missing.patch: drop as it's in the
+        new release.
+      - upstream/fix-help-memory-leaks.patch: drop as it's in the new release.
+      - upstream/fix-marking-read-mail-as-new.patch: drop as it's in the new
+        release.
+      - upstream/fix-quoting-color.patch: drop as it's in the new release.
+      - upstream/update-functions-in-docs.patch: drop as it's in the new
+        release.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Sat, 10 May 2025 10:57:08 -0300
+
+neomutt (20250404+dfsg-2) unstable; urgency=medium
+
+  * debian/patches/upstream/:
+      - dont-stop-if-spoolfile-is-missing.patch: import from upstream.
+      - fix-quoting-color.patch: import patch from upstream.
+      - fix-marking-read-mail-as-new.patch: import patch from upstream.
+      - fix-help-memory-leaks.patch: import patch from upstream.
+      - update-functions-in-docs.patch: import patch from upstream.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 18 Apr 2025 00:55:57 -0300
+
+neomutt (20250404+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20250404+dfsg.
+  * debian/control: bump Standards-Version to 4.7.2 - no changes needed.
+  * debian/copyright: update GPL-2+ text to the newer version linking
+    to gnu.org.
+  * debian/patches: refresh patches.
+      - 964416-manpages-fixes.patch: drop leftover patch, not needed anymore.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 04 Apr 2025 16:51:44 -0300
+
+neomutt (20250113+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20250113+dfsg.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 17 Jan 2025 12:31:37 -0300
+
+neomutt (20250109+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20250109+dfsg.
+  * debian/copyright: update upstream's copyright years.
+  * debian/patches/upstream/fix-pointer-conversion.patch: remove,
+    incorporated upstream.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 10 Jan 2025 19:41:51 -0300
+
+neomutt (20241212+dfsg-2) unstable; urgency=medium
+
+  * Run wrap-and-sort -at.
+  * Move scripts from /usr/share/doc to /usr/share/neomutt.
+      - debian/neomutt.docs: remove scripts.
+      - debian/neomutt.install: add scripts.
+  * Update arch list that disables notmuch support.
+      - debian/control: update list for libnotmuch-dev.
+      - debian/rules: update no_notmuch_architectures variable.
+  * debian/control: Suggests python3 because of available scripts in
+    /usr/share/neomutt.
+  * debian/copyright:
+      - Add a separate stanza for test-files component.
+      - Update packaging copyright year - happy 2025!
+  * debian/neomutt-docs.docs: remove unused file.
+  * debian/neomutt.clean: remove, not needed anymore.
+  * debian/neomutt.install: install neomutt.svg (instead of doing on d/rules).
+  * debian/neomutt.lintian-overrides: add more overrides to it and comments
+    explaining why they are added.
+  * debian/patches/upstream/fix-pointer-conversion.patch: add patch from
+    upstream. Thanks to Helge Deller. (Closes: #964416)
+  * debian/patches/upstream/fix-groff-C-font.patch: add new patch.
+  * debian/rules:
+      - Don't chmod files on dh_install, they are already executable.
+      - Move png icons to the right place instead of copying them.
+      - No need to rm d/tmp/usr/share/neomutt/logo, it's not installed.
+      - Remove old cruft not needed anymore.
+          + Remove --libexecdir as debhelper >= 12 sets it correctly.
+          + Remove --with-mailpath=/var/mail, it's the default on neomutt.
+          + Remove override_dh_autoreconf.
+          + Remove rm -rf of iconv dir and ca-bundle.crt file.
+      - Use execute_before instead of override_dh_install.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Sat, 04 Jan 2025 16:42:24 -0300
+
+neomutt (20241212+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20241212+dfsg
+      - neomutt-test-files: new version from git
+        (neomutt/neomutt-test-files@7404f44).
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Thu, 12 Dec 2024 11:09:24 -0300
+
+neomutt (20241114+dfsg1-1) unstable; urgency=medium
+
+  * New upstream version 20241114+dfsg1.
+      - Add neomutt test files via multiple upstream tarballs (MUT).
+  * debian/README.source: add info about MUT.
+  * debian/gbp.conf: add component to configuration.
+  * debian/rules: enable tests.
+  * debian/watch: make MUT to include neomutt-test-files in source package.
+  * debian/patches/debian-specific/neomuttrc.patch: remove deprecated
+    mixmaster option. (Closes: 1088052)
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 22 Nov 2024 23:31:29 -0300
+
+neomutt (20241114+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20241114+dfsg.
+  * debian/copyright: update upstream copyright stanza.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Fri, 15 Nov 2024 12:24:11 -0300
+
+neomutt (20241002+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 20241002+dfsg.
+  * debian/patches/: rebase patches against new upstream release.
+  * debian/rules: remove mixmaster build option, it was removed upstream.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Wed, 02 Oct 2024 20:25:47 -0300
+
+neomutt (20240425+dfsg-2) unstable; urgency=medium
+
+  * debian/NEWS: add news file warning about removal of config files.
+  * debian/README.Debian: add file with more info about config files removal.
+
+ -- Carlos Henrique Lima Melara <charlesmelara@riseup.net>  Tue, 11 Jun 2024 00:39:42 -0300
+
+neomutt (20240425+dfsg-1) unstable; urgency=medium
+
+  [ Carlos Henrique Lima Melara ]
+  * Team upload.
+  * New upstream version 20240425+dfsg.
+  * debian/neomutt.conffiles: remove obsolete configuration files.
+    (Closes: #1059383)
+  * debian/control:
+      - Bump Standards-Version - no changes needed.
+      - s/pkg-config/pkgconf/ in Build-Depends as pointed by lintian.
+      - Use https in Homepage field - Thanks Jörg Sommer.
+  * debian/copyright: complete overhaul of upstream and packaging copyright.
+  * debian/gbp.conf: add debian and upstream branch definition.
+  * debian/neomutt.docs: be more restrictive with installed docs.
+  * debian/neomutt.install: move documentation files to d/neomutt.docs.
+  * debian/not-installed: handle leftovers from tighten d/neomutt.docs.
+  * debian/patches/: rebase patches against new upstream release
+  * debian/patches/debian-specific/:
+      - document_debian_defaults.patch: update to document use_threads.
+      - neomuttrc.patch:
+          + Drop useless custom mailto-allow configuration.
+          + Use $use_threads instead of legacy option in $sort. Thanks to Ryan
+            Kavanagh. (Closes: #1057555)
+  * debian/watch:
+      - Update to make use of version 4 goodies.
+      - Use only +dfsg as the repack suffix as suggested by lintian.
+
+  [ Antonio Radici ]
+  * debian/control:
+    - Added Carlos to the Uploaders field, thanks a lot for your great work on
+      neomutt!
+
+ -- Antonio Radici <antonio@debian.org>  Fri, 07 Jun 2024 12:55:58 +0200
+
+neomutt (20231103+dfsg1-1) unstable; urgency=medium
+
+  [ Pino Toscano ]
+  * Install the application icons (PNG and SVG) in the hicolor XDG icon theme.
+  * Drop the application XPM icon, no more needed with the PNG/SVG icons.
+
+  [ Carlos Henrique Lima Melara ]
+  * debian/control:
+      - Build-Depends on libncurses-dev instead of the versioned ones.
+      - Update Build-Depends field to match new configure options.
+  * debian/neomutt.examples: drop samples installation - not shipped anymore.
+  * debian/neomutt.install:
+      - Don't use d/install to move html files.
+      - Drop samples installation - not shipped anymore.
+  * debian/patches/*: refresh patches.
+  * debian/patches/misc/smime.rc.patch: drop patch because upstream does not
+    ship smime.rc anymore.
+  * debian/patches/upstream/: drop patches cherry-picked from upstream or
+    fixed there. Namely:
+      - 1020414-gsasl-support-prereq.patch
+      - 1020414-gsasl-support.patch
+      - use-pkgconfig-for-libgpg-error.patch
+  * debian/rules:
+      - Fix logo's dir path and remove the dir after copying contents.
+      - Move the html pages to html folder under usr/share/doc/neomutt.
+      - Sort configure options and remove deprecated ones.
+      - Sync configure options with fedora's. (Closes: #927994)
+  * debian/salsa-ci.yml: add salsa CI.
+
+  [ Antonio Radici ]
+  * Remove mixmaster (removed from the archive in 2017), original change by
+    Jonathan Dowland (Closes: 949033).
+  * New upstream version 20231103+dfsg1. (Closes: #1025704)
+    + Most of the work came from Carlos Henrique Lima Melara for
+      20231023+dfsg1 which we skipped.
+  * debian/patches/:
+    - removed upstream/1018170-fix-redraw-corruption.patch which is no longer
+      needed (already upstream).
+    - removed upstream/1023767-use-pkgconf-to-find-gpgme.patch, same as above.
+
+ -- Antonio Radici <antonio@debian.org>  Thu, 14 Dec 2023 09:02:51 +0100
+
+neomutt (20220429+dfsg1-4.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix redraw corruption on some actions (Closes: #1018170)
+  * Use pkgconf to find gpgme (Closes: #1023767)
+
+ -- Timo Röhling <roehling@debian.org>  Sun, 27 Nov 2022 20:33:52 +0100
+
+neomutt (20220429+dfsg1-4) unstable; urgency=medium
+
+  * Actually enable gsasl support by adding the switch in debian/rules and the
+    B-D in debian/control (Closes: 1020414)
+  * debian/patches:
+    + Additional refresh to upstream/1020414-gsasl-support.patch to include
+      extra conditionals.
+
+ -- Antonio Radici <antonio@debian.org>  Thu, 27 Oct 2022 06:15:38 +0200
+
+neomutt (20220429+dfsg1-3) unstable; urgency=medium
+
+  * Added back gsasl support from upstream (Closes: 1020414)
+    + debian/patches/upstream/1020414-gsasl-support.patch provides that.
+  * debian/patches:
+    + upstream/use-pkgconfig-for-libgpg-error.patch: as the title says,
+      otherwise neomutt will not build starting libgpg-error-dev >= 1.46.
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 22 Oct 2022 22:36:00 +0200
+
+neomutt (20220429+dfsg1-2) unstable; urgency=medium
+
+  * Removed SASL support from neomutt (Closes: 1000482).
+    + this prevents the removal from Debian due to licensing issues.
+    + once gsasl support is available, SASL support will be re-enabled.
+    + see also upstream bug https://github.com/neomutt/neomutt/issues/3514
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 03 Sep 2022 18:48:57 +0200
+
+neomutt (20220429+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release (Closes: 1011336)
+  * debian/patches: all refreshed.
+
+ -- Antonio Radici <antonio@debian.org>  Fri, 08 Jul 2022 18:49:51 +0200
+
+neomutt (20211029+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release (Closes: 996327).
+  * debian/patches:
+    + all refreshed.
+    + upstream/*: removed all patches, they are there already.
+    + upstream/964416-manpages-fixes.patch: manpages warning fixes
+      (Closes: 964416).
+  * debian/watch:
+    + change version format from +dfsg.N-1 to +dfsgN-1
+    + modified to correctly fetch files given the new upstream format
+    + added check of signature in the tarball, added
+      debian/upstream/signing-key.asc for that.
+  * debian/upstream: added metadata and signing-key.asc
+  * debian/control:
+    + s/mime-support/mailcap/ given that mime-support is now transitional
+      (Closes: 979020).
+    + Standards-Version updated to 4.6.0.1 from 4.5.0, no changes required.
+    + switch debhelper compat from >= 10 to =13
+    + added Rules-Requires-Root: no
+  * debian/neomutt.examples: fixing one last residue of "mutt" naming.
+  * debian/copyright: switched to https for copyright-format-uri.
+  * debian/neomutt.install: also install debian/tmp/usr/share/doc/*
+  * debian/neomutt.manpages: added missing
+    debian/tmp/usr/share/man/man1/pgpewrap_neomutt.1
+  * debian/neomutt.mime: removed quoted %-escapes (Closes: 982681).
+  * debian/rules: stop installing changelog.gz and INSTALL.md
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 05 Dec 2021 09:27:13 +0100
+
+neomutt (20201127+dfsg.1-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix CVE-2021-32055 (Closes: #988107)
+
+ -- Moritz Muehlenhoff <jmm@debian.org>  Thu, 29 Jul 2021 23:13:20 +0200
+
+neomutt (20201127+dfsg.1-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Clear the message window on SIGWINCH, redraw-on-sigwinch.patch
+    (Closes: #980427)
+
+ -- Ryan Kavanagh <rak@debian.org>  Tue, 16 Mar 2021 15:37:31 -0400
+
+neomutt (20201127+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/patches/upstream/981306-mime-forwarding.patch:
+    + bug in MIME-forwarding fix (Closes: 981306).
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 30 Jan 2021 17:18:27 +0100
+
+neomutt (20201120+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release (Closes: 974601).
+    + important fix for CVE-2020-28896.
+  * debian/patches: all patches refreshed.
+  * debian/control:
+    + updated Standards-Version from 4.1.3 to 4.5.0, no change required.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 22 Nov 2020 08:58:47 +0100
+
+neomutt (20200626+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/control:
+    + set mutt@packages.debian.org as email, so that the bugs will arrive to
+      the correct place.
+  * Enabled autocrypt support (Closes: 944750)
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 20 Jun 2020 23:15:24 +0200
+
+neomutt (20200619+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+    + closes a bug already solved upstream, which made backspace and enter
+      equal (Closes: 945442)
+    + important security fixes are available to prevent MITM attacks
+      (CVE-2020-14093, another CVE not yet published)
+    + also security fix for CVE-2020-14154, where mutt proceeded connecting
+      even if the intermediate certificate was rejected.
+  * debian/patches
+    + removed both upstream/pager-segfault.patch and upstream/test-tz.patch
+      which are already upstream.
+  * debian/rules
+    + disabled testing as it causes the package not to build.
+  * debian/control: added dependency to sensible-utils.
+
+ -- Antonio Radici <antonio@debian.org>  Fri, 19 Jun 2020 19:20:24 +0200
+
+neomutt (20191207+dfsg.1-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix segfault in pager on new message received. (Closes: #953757)
+  * Fix FTBFS in non-UTC timezone. (Closes: #948895)
+
+ -- Stefano Rivera <stefanor@debian.org>  Thu, 19 Mar 2020 17:09:59 -0700
+
+neomutt (20191207+dfsg.1-1) unstable; urgency=medium
+
+  [ Andreas Henriksson ]
+  * New upstream version 20191207+dfsg.1
+    - fixes testsuite failure (Closes: #948895)
+
+  [ Jonathan Dowland ]
+  * Document autosetup/* copyright
+
+  [ Andreas Henriksson ]
+  * Finish documenting autosetup/* copyright (Closes: #950791)
+  * Revert "debian/patches: added upstream/0001-fix-build-tests-for-32-bit-arches.patch to fix build failures on 32-bits architectures."
+    - now part of upstream release.
+  * Make document_debian_default.patch apply again
+  * Use quilt to refresh all patches
+
+ -- Andreas Henriksson <andreas@fatal.se>  Mon, 02 Mar 2020 14:04:03 +0100
+
+neomutt (20191111+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/patches:
+    + added upstream/0001-fix-build-tests-for-32-bit-arches.patch to fix build
+      failures on 32-bits architectures.
+
+ -- Antonio Radici <antonio@debian.org>  Wed, 13 Nov 2019 07:47:41 +0100
+
+neomutt (20191102+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/watch: modified to download the source using the new git tags.
+  * debian/patches: all refreshed.
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 02 Nov 2019 16:21:21 -0700
+
+neomutt (20180716+dfsg.1-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix remaining references to /usr/lib/neomutt, especially in neomuttrc
+    so we can load configuration from neomuttrc.d again (Closes: #931746)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 11 Jul 2019 09:44:48 +0200
+
+neomutt (20180716+dfsg.1-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Use /usr/libexec as libexecdir (Closes: #905159)
+    (dh compat >= 12 does the right thing, so once bumped then
+    --libexecdir can be dropped from debian/rules.)
+
+ -- Andreas Henriksson <andreas@fatal.se>  Wed, 10 Apr 2019 08:34:57 +0200
+
+neomutt (20180716+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Important security updates for POP and IMAP users.
+
+ -- Antonio Radici <antonio@debian.org>  Wed, 18 Jul 2018 22:15:56 +0100
+
+neomutt (20180622+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/patches: all patches refreshed
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 08 Jul 2018 07:21:03 +0100
+
+neomutt (20180512+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/patches: all patches refreshed
+  * debian/rules: remove --enable-fcntl not supported anymore.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 27 May 2018 16:05:40 +0100
+
+neomutt (20180323+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release
+  * debian/patches:
+    + dropped all patches in neomutt-devel/, they are upstream
+  * debian/rules:
+    + set EXTRA_CFLAGS_FOR_BUILD and EXTRA_LDFLAGS_FOR_BUILD to build doc/
+      properly.
+    + explicitly set mandir until I figure out the autosetup bug that does
+      not export ${prefix}.
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 24 Mar 2018 08:45:38 +0000
+
+neomutt (20180223+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/control:
+    + Alioth deprecation: changed mailing list to neomutt@packages.debian.org
+    + Changed VCS-* fields as we moved to salsa.debian.org
+    + Add missing libxml2-utils to build-dep for xmlcatalog dependency.
+    + Standards-Version upgraded to 4.1.3, no changes required.
+  * debian/patches:
+    + All patches refreshed
+    + Added neomutt-devel/0006-default-setlocale-to-C.patch to deal with a
+      test failing due to missing locale.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 04 Mar 2018 14:59:49 +0000
+
+neomutt (20171215+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream release, fixes a couple of bugs.
+  * debian/patches:
+    + removed the previous neomutt-devel patch
+    + removed debian-specific/566076-build_doc_adjustments.patch as we are now
+      using autosetup.
+
+ -- Antonio Radici <antonio@debian.org>  Fri, 15 Dec 2017 22:21:32 +0000
+
+neomutt (20171208+dfsg.1-2) unstable; urgency=medium
+
+  * debian/patches:
+    + neomutt-devel/884324-fix-write-fcc-segfault.patch (Closes: 884324).
+
+ -- Antonio Radici <antonio@debian.org>  Fri, 15 Dec 2017 07:27:49 +0000
+
+neomutt (20171208+dfsg.1-1) unstable; urgency=medium
+
+  * New upstream version.
+  * debian/patches:
+    + all refreshed, removed some autosetup related patches that
+      are now upstream (in neomutt-devel/).
+    + removed debian-specifc/882690-use_fqdn_from_etc_mailname.patch also
+      upstream.
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 09 Dec 2017 08:34:25 +0000
+
+neomutt (20171027+dfsg.1-4) unstable; urgency=medium
+
+  * debian/patches:
+    + neomutt-devel/0006-autosetup-fix-check-for-missing-sendmail.patch: fix
+      autosetup build in relation to sendmail path (Closes: 883007).
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 03 Dec 2017 10:19:31 +0000
+
+neomutt (20171027+dfsg.1-3) unstable; urgency=medium
+
+  * debian/patches:
+    + neomutt-devel/0005-add-flags-to-cc-for-build.patch: add the correct
+      flags when building makedoc.
+    + debian-specific/882690-use_fqdn_from_etc_mailname.patch: small tweak to
+      address the resolution of https://github.com/neomutt/neomutt/issues/974.
+  * debian/control:
+    + Standards-Version updated to 4.1.2, no changes required.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 03 Dec 2017 09:20:39 +0000
+
+neomutt (20171027+dfsg.1-2) unstable; urgency=medium
+
+  * debian/patches:
+    + neomutt-devel/0001-autosetup-fix-out-of-tree-build.patch:
+      imported an upstream patch to fix an issue with doc/ not building out of
+      tree.
+    + a set of 3 other patches (000[234]-.*) by Julian Klode to build
+      correctly with autosetup.
+    + debian-specific/882690-use_fqdn_from_etc_mailname.patch to properly set
+      the hostname from /etc/mailname.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 26 Nov 2017 07:20:16 +0000
+
+neomutt (20171027+dfsg.1-1) unstable; urgency=medium
+
+  * Removed generated autosetup/jimsh0.c to comply with DFSG (Closes: 882717).
+    + The file was replaced with a B-D on jimsh.
+
+ -- Antonio Radici <antonio@debian.org>  Sun, 26 Nov 2017 06:24:32 +0000
+
+neomutt (20171027-2) unstable; urgency=medium
+
+  * debian/rules: switch to configure.autosetup and remove the dependency from
+    dh-autoreconf; autosetup is becoming the official configure script for
+    neomutt.
+  * debian/neomutt.clean: get rid of the temporary configure link created by
+    debian/rules
+  * debian/compat: switched to 10
+  * debian/copyright: fixed the duplicate license problem
+
+ -- Antonio Radici <antonio@debian.org>  Sat, 25 Nov 2017 19:38:29 +0000
+
+neomutt (20171027-1) unstable; urgency=medium
+
+  * Initial release (Closes: 882300)
+
+ -- Antonio Radici <antonio@debian.org>  Wed, 22 Nov 2017 20:50:29 +0000

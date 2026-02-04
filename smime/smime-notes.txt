@@ -1,0 +1,88 @@
+How to use neomutt's S/MIME capabilities
+
+
+The simplest way to use S/MIME with NeoMutt is to rely on GPGMe.
+
+- Make sure you have a PKCS#12 file bundling your private key and the X.509
+  certificate. Both key and certificate need to be in PEM format:
+  `openssl pkcs12 -export -out bundle.p12 -inkey my-key.pem -in my-cert.pem
+
+- Import your bundle into the GNUPG keyring:
+  `gpgsm --import bundle.p12`
+
+- Add `set crypt_use_gpgme` and `set smime_is_default` to your NeoMutt
+  configuration file.
+
+
+The rest of this document describes how to use S/MIME in NeoMutt without using
+GPGMe, i.e., by having NeoMutt call out to the `openssl` executable.
+
+- Add the contents of smime.rc to your .neomuttrc. Don't worry about changing
+  the smime_default_key line at this point -- you'll change it later.
+
+- Run './smime_keys init'.
+
+- Generate a Certificate Signing Request (CSR) and a private key using OpenSSL:
+  `openssl req -new -newkey rsa:2048 -out <csr-file> -keyout <key-file>`.
+
+- Pick a Certificate Authority and use the CSR to get a certificate. They will
+  need to provide you with your certificate and the certificate chain, in PEM
+  or DER format.
+
+- Add your certificate to the store. You will be asked to assign a label to
+  this key. If you do, you'll be able to use the mnemonic label instead of the
+  key id in .neomuttrc. In any case, smime_keys will confirm with both the key
+  id and the label.
+  `./smime_keys add_chain <key-file> <cert-file> <cert-chain-file>
+
+- Set the key id or the label as the value for `smime_default_key` in your
+  .neomuttrc.
+
+Other notes
+
+Key management is done in a way similar to OpenSSL's CA directory. Private
+keys and certificates are stored in different directories, as OpenSSL
+expects either to be supplied in a (distinct) file. Each directory contains
+an unsorted file named '.index' wherein each line has several fields:
+mailbox, keyid, label, id of the intermediate certificate and keyflags.
+
+    * Keyid is a hashvalue derived from the subject field of a certificate
+      and supplied by OpenSSL.
+
+    * The mailbox address is derived from either From or Sender field of the
+      message, and matched with the email field of the certificate. Non
+      matching address pairs get rejected, as get certificates not
+      containing a mailbox address at all. (These are security issues, that
+      perhaps should be configurable.)
+
+    * Label is set by the perl script (it will ask you to supply one), when
+      you add your keypair to the database. So are the remaining two fields.
+
+    * keyflags are set with certificate verification option of the perl
+      script. It may take as value one of the following: i: invalid
+      (verification failed), r: revoked, e: expired, u: unverified, v:
+      successfully verified and finally t: trusted, in case it was
+      successfully verified and you chose to trust the certificate (the
+      script will ask you). NeoMutt will not use invalid, revoked or expired
+      certificates for signing or encryption. It will ask for confirmation
+      before using unverified certificates, and finally it will issue a
+      warning before using successfully verified but untrusted certificates.
+
+The purpose fields of a certificate do not get verified yet, also there is
+no real check if the given file is a certificate at all.
+
+Key retrieval is done obviously by searching the index file for a given
+mailbox. If none is found, the user is presented a list of available keys
+and asked to select one of those.
+
+The certificate and key directories specified in .neomuttrc have to exist.
+NeoMutt will not create them. If you wish to sign messages yourself, note that
+this neomutt does not address any PKCS10 or PKCS12 issues (yet?); that is, you
+have to get a valid certificate outside of neomutt. (See above)
+
+A certificate can be viewed by adding the following to your ~/.mailcap:
+
+application/pkcs7-signature;openssl pkcs7 -in %s -inform der -noout \
+-print_certs -text | less; needsterminal
+application/x-pkcs7-signature;openssl pkcs7 -in %s -inform der -noout \
+-print_certs -text | less; needsterminal
